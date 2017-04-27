@@ -57,7 +57,13 @@ int grabby_register(grabby_ctx *ctx, void (*callback)(const char*, const char*))
     /** Storage for things and stuff */
     DBusMessage *msg;
     DBusMessageIter iter;
-    char *songname, *artist, *sigvalue2;
+
+    size_t buf = 512;
+    char songinfo[buf];
+    memset(songinfo, 0, buf * sizeof(char));
+
+
+    char *buffer = NULL, *id;
 
     /** Listen until the universe explodes */
     while (1) {
@@ -69,12 +75,11 @@ int grabby_register(grabby_ctx *ctx, void (*callback)(const char*, const char*))
         }
 
         if (dbus_message_iter_init(msg, &iter)) {
-            dbus_message_iter_get_basic(&iter, &sigvalue2);
+            dbus_message_iter_get_basic(&iter, &id);
 
             // HACK: Just hardcode that we want notifications from Spotify
-            if(strcmp(dbus_message_get_member(msg), "Notify") == 0 && strcmp(sigvalue2, "Spotify") == 0) {
+            if(strcmp(dbus_message_get_member(msg), "Notify") == 0 && strcmp(id, "Spotify") == 0) {
 
-                //
                 printf("=== NOW PLAYING ===");
 
                 while (dbus_message_iter_next(&iter)) {
@@ -82,8 +87,8 @@ int grabby_register(grabby_ctx *ctx, void (*callback)(const char*, const char*))
 
                     // HACK: Check if it's fixed first because otherwise check2 might sigsegv
                     if(!dbus_type_is_fixed(type) && dbus_type_is_basic(type)) {
-                        dbus_message_iter_get_basic(&iter, &songname);
-                        printf("%s\n", songname);
+                        dbus_message_iter_get_basic(&iter, &buffer);
+                        printf("%s\n", buffer);
                     }
                 }
             }
