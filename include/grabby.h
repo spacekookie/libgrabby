@@ -18,7 +18,7 @@ typedef struct grabby_ctx {
 
 int grabby_init(grabby_ctx *);
 
-int grabby_register(grabby_ctx *, const char *signal, void (*callback)(int, int));
+int grabby_register(grabby_ctx *ctx, void (*callback)(const char*, const char*));
 
 int grabby_free(grabby_ctx *);
 
