@@ -1,0 +1,4 @@
+libgrabby
+=========
+
+Grabs messages from spotify via dbus that indicate that songs are playing or something
